@@ -4,6 +4,7 @@ import { GEMINI_API_KEY } from "./config";
 // Add non-null assertion since config.ts already validates this exists
 const genAI = new GoogleGenerativeAI(GEMINI_API_KEY!);
 const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash" });
+
 const SYSTEM_INSTRUCTION = `
 You are an expert frontend developer. Generate a COMPLETE, self‑contained HTML file that includes all CSS and JavaScript inline (no external libraries). 
 Follow these rules strictly:

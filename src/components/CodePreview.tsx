@@ -3,6 +3,7 @@ import { useState } from "react";
 
 export default function CodePreview({ code }: { code: string }) {
   const [copied, setCopied] = useState(false);
+  const [activeTab, setActiveTab] = useState<"preview" | "code">("preview");
 
   const handleCopy = async () => {
     await navigator.clipboard.writeText(code);
@@ -11,34 +12,62 @@ export default function CodePreview({ code }: { code: string }) {
   };
 
   return (
-    <div className="mt-8 w-full max-w-3xl">
-      <div className="flex items-center justify-between mb-2">
-        <h2 className="text-xl font-semibold">Preview</h2>
+    <div className="mt-12 animate-fadeIn">
+      {/* Tab Navigation */}
+      <div className="flex gap-3 mb-4 border-b border-white/20">
         <button
-          onClick={handleCopy}
-          className="text-sm bg-gray-200 hover:bg-gray-300 px-3 py-1 rounded flex items-center gap-1"
+          onClick={() => setActiveTab("preview")}
+          className={`px-6 py-3 font-semibold transition-all relative ${
+            activeTab === "preview"
+              ? "text-white"
+              : "text-purple-300 hover:text-white"
+          }`}
         >
-          {copied ? "✅ Copied!" : "📋 Copy Code"}
+          🎯 Live Preview
+          {activeTab === "preview" && (
+            <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-gradient-to-r from-purple-500 to-pink-500 rounded-full"></div>
+          )}
+        </button>
+        <button
+          onClick={() => setActiveTab("code")}
+          className={`px-6 py-3 font-semibold transition-all relative ${
+            activeTab === "code"
+              ? "text-white"
+              : "text-purple-300 hover:text-white"
+          }`}
+        >
+          📝 Source Code
+          {activeTab === "code" && (
+            <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-gradient-to-r from-purple-500 to-pink-500 rounded-full"></div>
+          )}
         </button>
       </div>
 
-      <div className="border border-gray-300 rounded-lg overflow-hidden bg-white">
-        <iframe
-          srcDoc={code}
-          sandbox="allow-scripts allow-same-origin"
-          className="w-full h-96"
-          title="Code preview"
-        />
+      {/* Content */}
+      <div className="bg-gray-900/50 backdrop-blur-lg rounded-xl border border-white/10 overflow-hidden">
+        {activeTab === "preview" ? (
+          <div className="p-4 bg-white rounded-lg">
+            <iframe
+              srcDoc={code}
+              sandbox="allow-scripts allow-same-origin allow-popups"
+              className="w-full h-[500px] rounded-lg border-0"
+              title="Code preview"
+            />
+          </div>
+        ) : (
+          <div className="relative">
+            <button
+              onClick={handleCopy}
+              className="absolute top-4 right-4 z-10 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white font-medium px-4 py-2 rounded-lg transition-all shadow-lg flex items-center gap-2"
+            >
+              {copied ? "✅ Copied!" : "📋 Copy Code"}
+            </button>
+            <pre className="p-6 bg-gray-900 text-gray-100 overflow-x-auto font-mono text-sm max-h-[500px] overflow-y-auto">
+              <code>{code}</code>
+            </pre>
+          </div>
+        )}
       </div>
-
-      <details className="mt-4">
-        <summary className="cursor-pointer text-gray-600 hover:text-gray-800">
-          View source code
-        </summary>
-        <pre className="bg-gray-900 text-gray-100 p-4 rounded-lg overflow-auto mt-2 text-sm">
-          <code>{code}</code>
-        </pre>
-      </details>
     </div>
   );
 }
