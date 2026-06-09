@@ -59,6 +59,10 @@ export default function PromptInput({ onGenerate, isLoading }: Props) {
       <p className="text-center text-purple-300 text-sm mt-4">
         💡 Try: "A dark mode dashboard card with stats" or "A neon-styled button with hover effects"
       </p>
+      
+      <p className="text-center text-purple-400/60 text-xs mt-2">
+        🎁 Free tier: 5 generations per day
+      </p>
     </form>
   );
 }
