@@ -11,6 +11,20 @@ export async function POST(request: Request) {
     const headersList = await headers();
     const ip = headersList.get("x-forwarded-for")?.split(",")[0].trim() || "anonymous";
     
+    // Add this before rate limiting
+const premiumKey = request.headers.get("x-premium-key") || 
+                   request.headers.get("authorization")?.replace("Bearer ", "");
+
+let isPremium = false;
+let premiumRemaining = 0;
+
+if (premiumKey) {
+  // You can verify premium key here or trust client-side check
+  // For MVP, we'll trust client-side
+  isPremium = true;
+  premiumRemaining = parseInt(request.headers.get("x-premium-remaining") || "0");
+}
+
     // Apply Upstash rate limiting
     const { success, limit, reset, remaining } = await ratelimit.limit(ip);
     
